@@ -1,0 +1,51 @@
+---
+import { fetchFromAPI, STRAPI_BASE_URL } from "../lib/conection";
+
+const data = await fetchFromAPI("home");
+const sliderImage = data?.slider;
+
+let imageUrl = null;
+
+if (sliderImage && sliderImage.url) {
+    imageUrl = `${STRAPI_BASE_URL}${sliderImage.url}`;
+}
+---
+
+<section class="relative w-full h-screen mt-[-90px] overflow-hidden">
+    <div class="absolute inset-0 w-full h-full">
+        {
+            imageUrl ? (
+                <img
+                    src={imageUrl}
+                    alt="Portada Starless"
+                    class="w-full h-full object-cover"
+                    loading="eager"
+                />
+            ) : (
+                <div class="w-full h-full bg-neutral-900 flex items-center justify-center text-white/50">
+                    Sin imagen
+                </div>
+            )
+        }
+    </div>
+
+    <div
+        class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4"
+    >
+        <div class="max-w-4xl mx-auto">
+            <h1
+                class="text-white font-sans font-bold uppercase tracking-tighter leading-none mb-4
+                      text-5xl md:text-7xl lg:text-9xl drop-shadow-lg"
+            >
+                {data?.title || "STARLESS"}
+            </h1>
+
+            <h4
+                class="text-white font-sans font-light uppercase tracking-[0.2em]
+                      text-sm md:text-xl lg:text-2xl opacity-90"
+            >
+                {data?.subtitle || "Magazine"}
+            </h4>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,141 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { fetchFromAPI, STRAPI_URL_IMAGES } from "../../lib/conection";
+import { TransformarHTML } from "../../lib/lista.js";
+
+interface Musica {
+    id: number;
+    Titulo: string;
+    slug: string;
+    resumen: string;
+    autor: string;
+    fecha_publicacion: string;
+    portada?: {
+        url: string;
+        alternativeText?: string;
+    };
+    contenido?: string;
+}
+
+export async function getStaticPaths() {
+    const data = await fetchFromAPI("musicas");
+    const musicas: Musica[] = data || [];
+
+    return musicas.map((musica) => {
+        const relacionadosMusicas = musicas
+            .filter((item) => item.slug !== musica.slug)
+            .slice(0, 3);
+        return {
+            params: { slug: musica.slug },
+            props: { musica, relacionadosMusicas },
+        };
+    });
+}
+
+const { musica, relacionadosMusicas } = Astro.props;
+---
+<Layout>
+ <div class="bg-amber-300 min-h-screen p-4 md:p-8 font-sans">
+     <article class="bg-white rounded-[2.5rem] w-full max-w-[1200px] mx-auto p-8 md:p-12 shadow-sm"  >
+            <div class="mb-8">
+                <div class="flex items-baseline gap-3 mb-4 border-b border-transparent" >
+                    <span class="text-sm font-medium text-gray-500 uppercase tracking-wide"  >Musica</span
+                    >
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    {musica.Titulo}
+                </h1>
+                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                    <span><strong>Autor:</strong> {musica.autor}</span>
+                    <span><strong>Fecha:</strong>
+                        {
+                            new Date(
+                                musica.fecha_publicacion,
+                            ).toLocaleDateString("es-ES")
+                        }</span>
+                </div>
+            </div>
+
+            {
+                musica.portada && (
+                    <div class="mb-8 rounded-2xl overflow-hidden">
+                        <img
+                            src={`${STRAPI_URL_IMAGES}${musica.portada.url}`}
+                            alt={
+                                musica.portada.alternativeText || musica.Titulo
+                            }
+                            class="w-full h-auto object-cover"
+                        />
+                    </div>
+                )
+            }
+            <div class="mb-8">
+                <p class="text-2xl text-gray-700 leading-relaxed font-bold">
+                    {musica.resumen}
+                </p>
+            </div>
+
+            {
+                musica.contenido && (
+                    <div class="prose prose-lg prose-slate max-w-none text-2xl">
+                        <div set:html={TransformarHTML(musica.contenido)} />
+                    </div>
+                )
+            }
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <a href="/Musica"
+                    class="inline-flex items-center gap-2 text-yellow-600 hover:text-yellow-800 font-medium transition-colors"
+                >
+                     Volver a Musica
+                </a>
+            </div>
+
+            {
+                relacionadosMusicas.length > 0 && (
+                    <section class="w-full max-w-[1200px] mx-auto mt-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-8">
+                            Artículos relacionados
+                        </h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {relacionadosMusicas.map((item) => (
+                                <a href={`/Musica/${item.slug}`} class="group block"  >
+                                    <article class="flex flex-col gap-4">
+                                        {/* Imagen de la tarjeta */}
+                                        <div class="relative overflow-hidden rounded-xl aspect-[4/3] bg-gray-100">
+                                            {item.portada ? (
+                                                <img
+                                                    src={`${STRAPI_URL_IMAGES}${item.portada.url}`}
+                                                    alt={item.Titulo}
+                                                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-200">
+                                                    Sin imagen
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <div>
+                                                <span class="inline-block bg-black text-white text-xs font-bold px-2 py-1 rounded">
+                                                    Música
+                                                </span>
+                                            </div>
+
+                                            <h3 class="text-xl font-bold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors">
+                                                {item.Titulo}
+                                            </h3>
+                                            <p class="text-sm text-gray-600 line-clamp-2">
+                                                {item.resumen}
+                                            </p>
+                                        </div>
+                                    </article>
+                                </a>
+                            ))}
+                        </div>
+                    </section>
+                )
+            }
+        </article>
+    </div>
+</Layout>

@@ -1,0 +1,65 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { fetchFromAPI } from "../lib/conection";
+import Carta from "../components/Carta.astro";
+import Suscripcion from "../components/Suscripcion.astro";
+import CartaLado from "../components/CartaLado.astro";
+
+interface Musica {
+     Titulo: string;
+     slug: string;
+     artist: string;
+     resumen: string;
+     autor: string;
+     fecha_publicacion: string;
+     portada?: string;
+}
+
+const musicaData = (await fetchFromAPI("musicas")) || [];
+---
+<Layout>
+     <div class="bg-amber-300 min-h-screen p-4 md:p-8 font-sans">
+          <main class="bg-white rounded-[2.5rem] w-full max-w-[1200px] mx-auto p-6 md:p-12 shadow-sm mb-12" >
+               <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                 <div class="lg:col-span-8 flex flex-col gap-8">
+                      <div class="flex items-baseline gap-3 border-b border-transparent"  >
+                       <h1 class="text-3xl font-bold mb-4">Música</h1>
+                         </div>
+
+                         <div class="flex flex-col gap-8">
+                              {
+                                   musicaData.map((musica: Musica) => (
+                                        <Carta
+                                           tag="Musica"
+                                         titulo={musica.Titulo}
+                                         resumen={musica.resumen}
+                                          portada={musica.portada}
+                                         slug={musica.slug}
+                                        />
+                                   ))
+                              }
+                         </div>
+                    </div>
+
+                    <div class="lg:col-span-4 flex flex-col gap-10">
+                         
+                         <CartaLado
+                          titulo="Noticias"
+                          descripcion="aqui encontraras noticias del mundo del arte"
+                           textoBoton="Ver Noticias"
+                              enlace="/Noticias"  />
+                         <CartaLado
+                         titulo="Cine"
+                          descripcion="aqui encontraras articulos sobre el mundo del cine"
+                          textoBoton="Ver Cine"
+                          enlace="/Cine"  />
+                    </div>
+               </div>
+          </main>
+
+          <Suscripcion
+               textClass="text-amber-300"
+               bgClass="bg-slate-900"
+               borderClass="border-amber-300 hover:bg-amber-300 hover:text-slate-900"/>
+     </div>
+</Layout>
