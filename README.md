@@ -22,46 +22,6 @@ JavaScript (^5.9.3): JavaScript es el lenguaje que añade interactividad a la we
 El proyecto sigue la estructura estándar de Astro para organizar el código:
 
 
-/
-├── src/
-│   ├── components
-│   │   └── Carta.astro
-│   │   └── CartaLado.astro
-│   │   └── CartaLado.astro
-│   │   └── Footer.astro
-│   │   └── Header.astro
-│   │   └── Portada.astro
-│   │   └── Suscripcion.astro
-│   │   └── Ultimas publicaciones.astro
-├── layouts
-│   └──  layout.astro
-│  
-├── lib
-│   └── archivos ts y js
-│       └── conection.ts
-│       └── lista.js
-├── pages
-│   │── Cine
-│   │    └── [slug].astro
-│   │
-│   │── Musica
-│   │  └── [slug].astro
-│   │
-│   │── Noticias
-│   │   └── [slug].astro
-│   │
-│   │
-│   │
-│   │
-│   └── Cine.astro
-│   └── Contacto.astro
-│   └── Index.astro
-│   └── Musica.astro
-│   └── Noticias.astro
-│ 
-│ 
-│ 
-└── package.json
 
 
 ```
